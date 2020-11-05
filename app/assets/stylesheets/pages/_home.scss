@@ -1,1 +1,97 @@
 // Specific CSS for your home-page
+body {
+  font-size: 12px;
+}
+h3 {
+  font-size: 14px;
+}
+hr {
+  margin: 10px 0;
+}
+.home-container {
+  width: 100%;
+}
+.nes-container {
+  padding: 0px;
+}
+.character {
+  height: 100%;
+}
+.nes-progress {
+  height: 20px;
+}
+.nes-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  padding: 0px;
+}
+.nes-btn i {
+  font-size: 8px;
+}
+.life-container {
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  // width: 100%;
+  padding: 12px 6px;
+}
+.life-progress {
+  position: relative;
+  // width: 100%;
+  // margin: 0 10px;
+}
+.life-value {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  margin-top: -10px;
+  margin-right: -10px;
+  z-index: 10;
+}
+.skills {
+  // padding: 0 8px;
+}
+.popover-body {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+}
+.arrow::after {
+  border-top-color: black !important;
+}
+.skills i {
+  font-size: 18px;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+.skills button {
+  background: none;
+  border: none;
+  color: black;
+
+  &:focus {
+    outline: none;
+  }
+}
+.skillset-dropdown {
+  padding: 0px 16px;
+  min-width: 120px;
+}
+.skillset-dropdown__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 8px 0;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+.inventory textarea {
+  width: 100%;
+}
