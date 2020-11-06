@@ -20,7 +20,7 @@ class ChatReflex < ApplicationReflex
   def launch(character_id, difficulty, special_skill, skill, factor, message_id)
     character = Character.find(character_id)
 
-    result = launch_and_calculate_success(character, difficulty, skill, factor)
+    result = launch_and_calculate_success(character, difficulty, special_skill, skill, factor)
 
     Message.create!(
       author: character.name,
@@ -41,9 +41,9 @@ class ChatReflex < ApplicationReflex
 
   private
 
-  def launch_and_calculate_success(character, difficulty, skill, factor)
+  def launch_and_calculate_success(character, difficulty, special_skill, skill, factor)
 
-    difficulty = ((character.send(skill) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present?
+    difficulty = ((character.send(skill.downcase) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present? && special_skill.present?
 
     launch = rand(1..100)
     success = launch <= difficulty.to_i
