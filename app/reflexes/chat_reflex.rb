@@ -28,7 +28,7 @@ class ChatReflex < ApplicationReflex
       success: result[:success],
       result:  result[:launch],
       difficulty: result[:difficulty],
-      skill: skill,
+      skill: special_skill.present? ? special_skill : skill,
       launch: true
     )
 
