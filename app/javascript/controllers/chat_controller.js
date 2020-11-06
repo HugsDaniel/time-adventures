@@ -33,7 +33,9 @@ export default class extends ApplicationController {
       'ChatReflex#launch',
       event.currentTarget.dataset.characterId,
       event.currentTarget.dataset.difficulty,
+      event.currentTarget.dataset.specialSkill,
       event.currentTarget.dataset.skill,
+      event.currentTarget.dataset.factor,
       lastMessageId
     )
   }

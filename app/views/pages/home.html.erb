@@ -53,14 +53,23 @@
                 <hr>
                 <div class="special-skill my-2 d-flex align-items-center justify-content-between">
                   <span class="mx-1"><%= special_skill.name %></span>
-                  <button class="d-flex" data-target="chat.diceSpecial" data-action="click->chat#launch" data-skill="<%= special_skill.name %>" data-difficulty="<%= special_skill.value %>" data-character-id="<%= char.id %>"><%= special_skill.value %><i class="fas fa-dice-d20 ml-2"></i></button>
+                  <button class="d-flex" data-target="chat.diceSpecial" data-action="click->chat#launch" data-special-skill="<%= special_skill.name %>" data-difficulty="<%= special_skill.value %>" data-skill="<%= special_skill.skill %>" data-factor="<%= special_skill.factor %>" data-character-id="<%= char.id %>" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= popover_content_for(special_skill) %>">
+                    <% if special_skill.skill.present? %>
+                      <%= char.send(special_skill.skill)*5/special_skill.factor + special_skill.value %>
+                    <% else %>
+                      <%= special_skill.value %>
+                    <% end %>
+                    <i class="fas fa-dice-d20 ml-2"></i>
+                  </button>
                 </div>
               <% end %>
               <hr>
-              <button data-id="<%= char.id%>" class="toggleNewSpecialForm nes-btn is-primary mx-auto my-2">+</button>
+              <button data-id="<%= char.id%>" class="toggleNewSpecialForm nes-btn is-primary mx-auto my-2" onclick="toggleSpecialForm()">+</button>
               <form action="#" id="newSpecialForm<%= char.id %>" class="d-none" data-controller="special" data-action="submit->special#create" data-character-id="<%= char.id %>">
                 <input class="w-100" type="text" data-target="special.name" placeholder="Nom">
-                <input class="w-100" type="text" data-target="special.value" placeholder="Valeur">
+                <input class="w-100" type="number" data-target="special.value" placeholder="Valeur">
+                <%= select_tag "skill", options_for_select(SpecialSkill.skills), include_blank: true, data: { target: "special.skill" } %>
+                <input class="w-100" type="number" data-target="special.factor" placeholder="Facteur de div (défaut: 1)">
                 <button type="submit" class="nes-btn is-success"><i class="fas fa-check"></i> </button>
               </form>
             </div>
@@ -95,3 +104,10 @@
     </div>
   </div>
 </div>
+
+<script>
+  const toggleSpecialForm = () => {
+    this.event.preventDefault()
+    document.getElementById("newSpecialForm" + this.event.target.dataset.id).classList.toggle("d-none")
+  }
+</script>

@@ -103,10 +103,12 @@ apaiser = SpecialSkill.create!(
 courir = SpecialSkill.create!(
   name: "Courir / Sauter / Grimper",
   value: 10,
+  skill: "constitution",
   character: alfonse
 )
 lire = SpecialSkill.create!(
   name: "Lire / Écrire",
+  skill: "intelligence",
   value: 2,
   character: alfonse
 )
@@ -128,5 +130,7 @@ apprendre = SpecialSkill.create!(
 dressage = SpecialSkill.create!(
   name: "Dressage",
   value: 5,
+  skill: "charisme",
+  factor: 2,
   character: francois
 )

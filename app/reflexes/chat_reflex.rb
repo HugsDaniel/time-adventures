@@ -17,13 +17,13 @@ class ChatReflex < ApplicationReflex
     cable_ready.broadcast
   end
 
-  def launch(character_id, difficulty, skill, message_id)
-    character = Character.find(character_id).name
+  def launch(character_id, difficulty, special_skill, skill, factor, message_id)
+    character = Character.find(character_id)
 
-    result = launch_and_calculate_success(difficulty)
+    result = launch_and_calculate_success(character, difficulty, skill, factor)
 
     Message.create!(
-      author: character,
+      author: character.name,
       content: result[:content],
       success: result[:success],
       result:  result[:launch],
@@ -41,11 +41,16 @@ class ChatReflex < ApplicationReflex
 
   private
 
-  def launch_and_calculate_success(difficulty)
+  def launch_and_calculate_success(character, difficulty, skill, factor)
+
+    difficulty = ((character.send(skill) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present?
+
     launch = rand(1..100)
     success = launch <= difficulty.to_i
 
-    if success && launch <= 10
+    if difficulty.to_i == launch
+      message = "Ça passe tout juste"
+    elsif success && launch <= 10
       message = "Gros GG !"
     elsif success
       message = "GG !"

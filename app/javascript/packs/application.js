@@ -12,12 +12,6 @@ document.addEventListener('turbolinks:load', () => {
   $(function () {
     $('[data-toggle="popover"]').popover()
   })
-  document.querySelectorAll(".toggleNewSpecialForm").forEach((btn) => {
-    btn.addEventListener("click", (event) => {
-      event.preventDefault()
-      document.getElementById("newSpecialForm" + event.target.dataset.id).classList.remove("d-none")
-    })
-  })
 });
 
 import "controllers"
