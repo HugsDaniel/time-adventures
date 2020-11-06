@@ -103,7 +103,7 @@ apaiser = SpecialSkill.create!(
 courir = SpecialSkill.create!(
   name: "Courir / Sauter / Grimper",
   value: 10,
-  skill: "constitution",
+  skill: "dexterite",
   character: alfonse
 )
 lire = SpecialSkill.create!(
