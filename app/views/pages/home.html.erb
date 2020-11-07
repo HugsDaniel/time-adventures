@@ -1,113 +1,13 @@
 <div class="home-container">
-  <div class="characters row no-gutters">
+  <div class="top-section no-gutters d-flex">
     <% @characters.each do |char| %>
-      <div class="col-md-3">
-        <div class="nes-container character">
-          <div class="nes-input is-dark"> <%= char.name %> </div>
-          <div class="container">
-            <div class="row life-container">
-              <%= link_to "#", class: 'nes-btn is-error col-1', data: { reflex: 'click->Life#decrease', id: char.id }  do %>
-                <i class="fas fa-minus"></i>
-              <% end %>
-              <div class="life-progress col">
-                <progress class="nes-progress is-success" value="<%= char.life %>" max="<%= char.max_life %>">
-                </progress>
-                <div class="life-value">
-                  <%= char.life %>
-                </div>
-              </div>
-              <%= link_to "#", class: 'nes-btn is-success col-1', data: { reflex: 'click->Life#increase', id: char.id } do %>
-                <i class="fas fa-plus"></i>
-              <% end %>
-            </div>
-            <div class="skills d-flex justify-content-between" data-controller="chat" id="skills">
-                <% char.skills.each do |key, skill| %>
-                  <div class="skill d-flex flex-column justify-content-between align-items-center">
-                    <div class="dropdown" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= key.to_s.capitalize %>">
-                      <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <%= skill_icon_for(key) %>
-                        <%= skill * 5 %>
-                      </button>
-                      <div class="dropdown-menu skillset-dropdown" aria-labelledby="dropdownMenuButton">
-                        <button class="skillset-dropdown__item" data-target="chat.diceNormal" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= skill * 5 %>" data-character-id="<%= char.id %>">
-                          <p><%= skill * 5 %></p>
-                          <i class="fas fa-dice-d20"></i>
-                        </button>
-                        <hr class="my-1">
-                        <button class="skillset-dropdown__item" data-target="chat.diceHard" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= (skill * 2.5).floor %>" data-character-id="<%= char.id %>">
-                          <p><%= (skill * 2.5).floor %></p>
-                          <i class="fas fa-dice-d20"></i>
-                        </button>
-                        <hr class="my-1">
-                        <button class="skillset-dropdown__item" data-target="chat.diceImpossible" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= skill %>" data-character-id="<%= char.id %>">
-                          <p><%= skill %></p>
-                          <i class="fas fa-dice-d20"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-            </div>
-            <div class="skills" data-controller="chat" id="special_skills">
-              <% char.special_skills.each do |special_skill| %>
-                <hr>
-                <div class="special-skill my-2 d-flex align-items-center justify-content-between">
-                  <span class="mx-1"><%= special_skill.name %></span>
-                  <button class="d-flex" data-target="chat.diceSpecial" data-action="click->chat#launch" data-special-skill="<%= special_skill.name %>" data-difficulty="<%= special_skill.value %>" data-skill="<%= special_skill.skill %>" data-factor="<%= special_skill.factor %>" data-character-id="<%= char.id %>" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= popover_content_for(special_skill) %>">
-                    <% if special_skill.skill.present? %>
-                      <%= char.send(special_skill.skill)*5/special_skill.factor + special_skill.value %>
-                    <% else %>
-                      <%= special_skill.value %>
-                    <% end %>
-                    <i class="fas fa-dice-d20 ml-2"></i>
-                  </button>
-                </div>
-              <% end %>
-              <hr>
-              <button data-id="<%= char.id%>" class="toggleNewSpecialForm nes-btn is-primary mx-auto my-2" onclick="toggleSpecialForm()">+</button>
-              <form action="#" id="newSpecialForm<%= char.id %>" class="d-none" data-controller="special" data-action="submit->special#create" data-character-id="<%= char.id %>">
-                <input class="w-100" type="text" data-target="special.name" placeholder="Nom">
-                <input class="w-100" type="number" data-target="special.value" placeholder="Valeur">
-                <%= select_tag "skill", options_for_select(SpecialSkill.skills), include_blank: true, data: { target: "special.skill" } %>
-                <input class="w-100" type="number" data-target="special.factor" placeholder="Facteur de div (défaut: 1)">
-                <button type="submit" class="nes-btn is-success"><i class="fas fa-check"></i> </button>
-              </form>
-            </div>
-          </div>
-        </div>
+      <div id="character<%= char.id %>" data-controller="realtime-partial" data-realtime-partial-key="characters/<%= char.id %>">
+        <%= render "pages/character", char: char %>
       </div>
     <% end %>
   </div>
-  <div class="row no-gutters">
-    <div id="chat"
-      data-controller="chat" data-action="chats:added@document->chat#reload cable-ready:after-morph@document->chat#scroll"
-      class="chat tab-pane col-lg-3">
-      <div data-target="chat.list" class="nes-container p-3" style="height:400px; max-width:800px; overflow-y:scroll;">
-        <% @messages.each do |message| %>
-          <% if message.launch %>
-            <div class="rounded-lg bg-white border my-2 p-1 px-2 text-right w-100 float-right">
-              <div class="nes-text mb-2"> <%= message.author %> </div>
-              <small>(<%= message.skill %>)</small>
-              <div class="launch-result mt-2">
-                <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"><%= message.result %></span>
-                <small>/ <%= message.difficulty %></small>
-              </div>
-              <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"> <%= message.content %></span>
-            </div>
-          <% else %>
-            <div class="rounded-lg border my-2 p-1 px-2 text-right w-75 float-right">
-              <%= message.content %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
+  <div class="bottom-section row no-gutters">
+    <%= render "pages/chat" %>
+    <%= render "pages/map" %>
   </div>
 </div>
-
-<script>
-  const toggleSpecialForm = () => {
-    this.event.preventDefault()
-    document.getElementById("newSpecialForm" + this.event.target.dataset.id).classList.toggle("d-none")
-  }
-</script>

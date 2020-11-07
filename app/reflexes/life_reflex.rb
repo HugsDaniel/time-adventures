@@ -8,6 +8,8 @@ class LifeReflex < ApplicationReflex
       character.life += 1
       character.save
     end
+
+    morph "#life#{character.id}", ApplicationController.render( partial: "pages/life", locals: { char: character })
   end
 
   def decrease
@@ -16,5 +18,6 @@ class LifeReflex < ApplicationReflex
       character.life -= 1
       character.save
     end
+    morph "#life#{character.id}", ApplicationController.render( partial: "pages/life", locals: { char: character })
   end
 end

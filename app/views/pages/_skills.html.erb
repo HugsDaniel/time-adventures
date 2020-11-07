@@ -1,0 +1,26 @@
+<% char.skills.each do |key, skill| %>
+  <div class="skill d-flex flex-column justify-content-between align-items-center">
+    <div class="dropdown" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= key.to_s.capitalize %>">
+      <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <%= skill_icon_for(key) %>
+        <%= skill * 5 %>
+      </button>
+      <div class="dropdown-menu skillset-dropdown" aria-labelledby="dropdownMenuButton">
+        <button class="skillset-dropdown__item" data-target="chat.diceNormal" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= skill * 5 %>" data-character-id="<%= char.id %>">
+          <p><%= skill * 5 %></p>
+          <i class="fas fa-dice-d20"></i>
+        </button>
+        <hr class="my-1">
+        <button class="skillset-dropdown__item" data-target="chat.diceHard" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= (skill * 2.5).floor %>" data-character-id="<%= char.id %>">
+          <p><%= (skill * 2.5).floor %></p>
+          <i class="fas fa-dice-d20"></i>
+        </button>
+        <hr class="my-1">
+        <button class="skillset-dropdown__item" data-target="chat.diceImpossible" data-action="click->chat#launch" data-skill="<%= key.to_s.capitalize %>" data-difficulty="<%= skill %>" data-character-id="<%= char.id %>">
+          <p><%= skill %></p>
+          <i class="fas fa-dice-d20"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

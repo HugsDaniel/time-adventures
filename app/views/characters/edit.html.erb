@@ -1,0 +1,57 @@
+<div class="">
+  <div class="card">
+    <div class="card-header text-center">
+      <h2>
+        Modifier <%= @character.name %>
+      </h2>
+    </div>
+    <div class="card-body py-5 container">
+      <h2 class="mb-3">Base</h2>
+      <%= simple_form_for @character do |f| %>
+        <%= f.input :name, label: "Nom" %>
+        <div class="d-flex">
+          <%= f.input :life, label: "Vie actuelle" %>
+          <%= f.input :max_life, label: "Vie max" %>
+        </div>
+        <div class="d-flex">
+          <%= f.input :perception %>
+          <%= f.input :intelligence %>
+          <%= f.input :dexterite %>
+          <%= f.input :force %>
+          <%= f.input :constitution %>
+          <%= f.input :charisme %>
+          <%= f.input :chance %>
+        </div>
+        <div class="d-flex w-100">
+          <%= f.input :inventory, label: "Inventaire", input_html: { rows: 15 }, wrapper_html: { class: 'w-100' } %>
+        </div>
+
+        <h2 class="my-3">Compétences spéciales</h3>
+        <div class="special_skills">
+          <%= f.simple_fields_for :special_skills do |ff| %>
+            <div class="card">
+              <div class="card-header"></div>
+              <div class="card-body">
+                <div class="d-flex w-100 justify-content-between">
+                  <div class="w-75">
+                    <%= ff.input :name, label: "Nom" %>
+                  </div>
+                  <%= ff.input :value, label: "Valeur" %>
+                </div>
+                <div class="d-flex w-100 justify-content-between">
+                  <div class="w-75">
+                    <%= ff.input :skill, collection: SpecialSkill.skills, label: "Compétence associée" %>
+                  </div>
+                  <%= ff.input :factor, label: "Facteur de division", placeholder: "Défaut : 1" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="text-center py-4">
+          <%= f.submit "Enregistrer", class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

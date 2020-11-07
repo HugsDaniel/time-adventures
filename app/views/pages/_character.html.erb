@@ -1,0 +1,43 @@
+<div data-controller="realtime-partial" data-realtime-partial-key="inventories/<%= char.id %>" id="inventoryModalContainer<%= char.id %>">
+  <%= render "pages/character_inventory", char: char %>
+</div>
+
+<div class="character-container nes-container">
+  <div class="character-card">
+    <div class="nes-input is-dark d-flex justify-content-between align-items-center">
+      <%= char.name %>
+      <div class="character-actions d-flex">
+        <button class="nes-btn is-success" data-toggle="modal" data-target="#inventoryModal<%= char.id %>">
+          <i class="fas fa-box"></i>
+        </button>
+        <%= link_to edit_character_path(char), class: "nes-btn is-primary ml-2" do %>
+          <i class="fas fa-pen"></i>
+        <% end %>
+      </div>
+    </div>
+    <div class="container">
+      <div id="life<%= char.id %>" class="row life-container">
+        <%= render "pages/life", char: char %>
+      </div>
+      <div class="skills d-flex justify-content-between" data-controller="chat" id="skills<%= char.id %>">
+        <%= render "pages/skills", char: char %>
+      </div>
+      <div class="skills" data-controller="chat" id="special_skills">
+        <% char.special_skills.order(:id).each do |special_skill| %>
+          <hr>
+          <div class="special-skill my-2 d-flex align-items-center justify-content-between">
+            <span class="mx-1"><%= special_skill.name %></span>
+            <button class="d-flex" data-target="chat.diceSpecial" data-action="click->chat#launch" data-special-skill="<%= special_skill.name %>" data-difficulty="<%= special_skill.value %>" data-skill="<%= special_skill.skill %>" data-factor="<%= special_skill.factor %>" data-character-id="<%= char.id %>" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= popover_content_for(special_skill) %>">
+              <% if special_skill.skill.present? %>
+                <%= char.send(special_skill.skill)*5/special_skill.factor + special_skill.value %>
+              <% else %>
+                <%= special_skill.value %>
+              <% end %>
+              <i class="fas fa-dice-d20 ml-2"></i>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

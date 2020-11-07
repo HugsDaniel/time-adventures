@@ -1,0 +1,22 @@
+<div class="modal fade" id="inventoryModal<%= char.id %>" tabindex="-1" role="dialog" aria-labelledby="editCharacterModalLabel" aria-hidden="true">
+  <%= simple_form_for char, url: inventory_character_url(char), method: :patch do |f| %>
+    <div class="modal-dialog" role="document" data-controller="inventory">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Inventaire</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <%= f.input :inventory, input_html: { rows: 20, class: "w-100" } %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <%= f.submit "Enregistrer", class: "btn btn-primary" %>
+          <!-- <button data-action="click->inventory#update" data-target="inventory.btn" data-id="<%= char.id %>" class="btn btn-primary">Enregistrer</button> -->
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
