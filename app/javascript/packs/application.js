@@ -4,6 +4,7 @@ require("@rails/activestorage").start()
 require("channels")
 
 import "bootstrap";
+import { initMap } from "./map"
 
 document.addEventListener('turbolinks:load', () => {
   $(function () {
@@ -12,6 +13,7 @@ document.addEventListener('turbolinks:load', () => {
   $(function () {
     $('[data-toggle="popover"]').popover()
   })
+  initMap()
 });
 
 import "controllers"

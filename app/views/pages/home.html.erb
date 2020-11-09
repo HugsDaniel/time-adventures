@@ -1,17 +1,32 @@
-<div class="home-container">
-  <div class="top-section no-gutters d-flex">
+<div class="home-container row no-gutters">
+  <div class="left-section col-lg-3 col-md-6 col-sm-12 no-gutters">
     <% @characters.each do |char| %>
       <div id="character<%= char.id %>" data-controller="realtime-partial" data-realtime-partial-key="characters/<%= char.id %>">
         <%= render "pages/character", char: char %>
       </div>
     <% end %>
   </div>
-  <div class="bottom-section row no-gutters">
+  <div class="middle-section col-lg-3 col-md-6 col-sm-12 no-gutters">
     <div id="chat"
       data-controller="chat"
-      class="chat-container tab-pane col-lg-4">
+      class="chat-container">
       <%= render "pages/chat", messages: @messages %>
     </div>
-    <%= render "pages/map" %>
+  </div>
+  <div class="right-section col-lg-6 col-md-12 col-sm-12 no-gutters">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <% @maps.each do |map| %>
+          <a class="nav-item nav-link <%= 'active' if map.name == 'Monde' %>" id="nav-<%= map.id %>-tab" data-toggle="tab" href="#nav-<%= map.id %>" role="tab" aria-controls="nav-<%= map.id %>" aria-selected="true"><%= map.name %></a>
+        <% end %>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <% @maps.each do |map| %>
+        <div class="tab-pane fade <%= 'show active' if map.name == 'Monde' %>" id="nav-<%= map.id %>" role="tabpanel" data-map-id="<%= map.id %>" data-map-name="<%= map.name %>" aria-labelledby="nav-<%= map.id %>-tab">
+          <%= render "pages/map", map: map %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

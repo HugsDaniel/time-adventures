@@ -1,3 +1,4 @@
+require "open-uri"
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 #
@@ -11,6 +12,26 @@ Message.destroy_all
 SpecialSkill.destroy_all
 Character.destroy_all
 
+
+puts "Creating maps"
+
+file = URI.open('https://res.cloudinary.com/hugs/image/upload/v1604409673/Carte_des_Iles_Obscures_vhthku.jpg')
+map = Map.new(name: 'Monde')
+map.image.attach(io: file, filename: 'monde.jpg', content_type: 'image/jpg')
+
+map.save!
+
+file = URI.open('https://res.cloudinary.com/hugs/image/upload/v1604411534/ile-bannis_xtkg3v.png')
+map = Map.new(name: 'Ile des Bannis')
+map.image.attach(io: file, filename: 'bannis.png', content_type: 'image/png')
+
+map.save!
+
+file = URI.open('https://res.cloudinary.com/hugs/image/upload/v1604515897/l8qwenrpo5ic9rfj4amu.png')
+map = Map.new(name: 'Ile des Templiers')
+map.image.attach(io: file, filename: 'templiers.png', content_type: 'image/png')
+
+map.save!
 
 puts "Creating characters"
 

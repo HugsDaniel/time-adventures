@@ -12,5 +12,6 @@ class PagesController < ApplicationController
                            .to_a
                            .unshift(@current_character)
     @messages ||= Message.all.order("created_at DESC")
+    @maps = Map.with_attached_image
   end
 end

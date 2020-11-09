@@ -9,19 +9,33 @@ h3 {
 hr {
   margin: 10px 0;
 }
+.map-tabs {
+  height: 70px;
+}
 .home-container {
   width: 100%;
   height: 100%;
 }
-.top-section {
-  height: 40vh;
-}
-.character-container{
-  height:100% !important;
+.left-section {
+  height: 100%;
   overflow: scroll;
 }
-.bottom-section {
-  height: 60vh;
+.middle-section {
+  height: 100%;
+}
+.right-section {
+  height: 100%;
+}
+.right-section button {
+  height: 35px;
+}
+#nav-tabContent, .tab-pane {
+  width: 100%;
+  height: calc(100% - 70px);
+}
+canvas {
+  width: 100%;
+  height: 100%;
 }
 .chat-container {
   height: 100%;
@@ -132,4 +146,23 @@ hr {
 }
 .inventory textarea {
   width: 100%;
+}
+.tabs-underlined {
+  display: flex;
+  align-items: center;
+}
+
+.tabs-underlined .tab-underlined {
+  color: black;
+  padding: 8px;
+  margin: 8px 16px;
+  opacity: .4;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 4px solid transparent;
+}
+
+.tabs-underlined .tab-underlined.active {
+  opacity: 1;
+  border-bottom: 3px solid #555555;
 }
