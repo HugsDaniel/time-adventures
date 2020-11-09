@@ -3,20 +3,6 @@
 class ChatReflex < ApplicationReflex
   include CableReady::Broadcaster
 
-  def post(message, message_id)
-    @chats = Rails.cache.read(:chats) || []
-    @chats.shift while @chats.size > 1000
-    @chats << {
-      id: message_id,
-      author: request.remote_ip,
-      message: message,
-      created_at: Time.current.iso8601,
-    }
-    Rails.cache.write :chats, @chats
-    cable_ready["chat"].dispatch_event name: "chats:added", detail: {message_id: message_id}
-    cable_ready.broadcast
-  end
-
   def launch(character_id, difficulty, special_skill, skill, factor, message_id)
     character = Character.find(character_id)
 
@@ -32,8 +18,10 @@ class ChatReflex < ApplicationReflex
       launch: true
     )
 
-    cable_ready["chat"].dispatch_event name: "chats:added", detail: {message_id: message_id}
-    cable_ready.broadcast
+    morph "#chat", ApplicationController.render( partial: "pages/chat", locals: { messages: Message.all.order("created_at DESC") })
+
+    # cable_ready["chat"].dispatch_event name: "chats:added", detail: {message_id: message_id}
+    # cable_ready.broadcast
   end
 
   def reload

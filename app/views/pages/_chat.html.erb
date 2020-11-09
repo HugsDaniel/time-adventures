@@ -1,23 +1,19 @@
-<div id="chat"
-  data-controller="chat" data-action="chats:added@document->chat#reload cable-ready:after-morph@document->chat#scroll"
-  class="chat-container tab-pane col-lg-4">
-  <div data-target="chat.list" class="nes-container chat p-3">
-    <% @messages.each do |message| %>
-      <% if message.launch %>
-        <div class="rounded-lg bg-white border my-2 p-1 px-2 text-right w-100 float-right">
-          <div class="nes-text mb-2"> <%= message.author %> </div>
-          <small>(<%= message.skill %>)</small>
-          <div class="launch-result mt-2">
-            <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"><%= message.result %></span>
-            <small>/ <%= message.difficulty %></small>
-          </div>
-          <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"> <%= message.content %></span>
+<div data-target="chat.list" class="nes-container chat p-3">
+  <% messages.each do |message| %>
+    <% if message.launch %>
+      <div class="rounded-lg bg-white border my-2 p-1 px-2 text-right w-100 float-right">
+        <div class="nes-text mb-2"> <%= message.author %> </div>
+        <small>(<%= message.skill %>)</small>
+        <div class="launch-result mt-2">
+          <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"><%= message.result %></span>
+          <small>/ <%= message.difficulty %></small>
         </div>
-      <% else %>
-        <div class="rounded-lg border my-2 p-1 px-2 text-right w-75 float-right">
-          <%= message.content %>
-        </div>
-      <% end %>
+        <span class="nes-text <%= message.success ? 'is-success' : 'is-error' %>"> <%= message.content %></span>
+      </div>
+    <% else %>
+      <div class="rounded-lg border my-2 p-1 px-2 text-right w-75 float-right">
+        <%= message.content %>
+      </div>
     <% end %>
-  </div>
+  <% end %>
 </div>

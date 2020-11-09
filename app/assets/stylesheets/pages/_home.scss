@@ -29,6 +29,8 @@ hr {
 .chat {
   height: 100%;
   overflow: scroll;
+  display: flex;
+  flex-direction: column-reverse;
 }
 .nes-container {
   height: 100%;

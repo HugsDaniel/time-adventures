@@ -7,7 +7,11 @@
     <% end %>
   </div>
   <div class="bottom-section row no-gutters">
-    <%= render "pages/chat" %>
+    <div id="chat"
+      data-controller="chat"
+      class="chat-container tab-pane col-lg-4">
+      <%= render "pages/chat", messages: @messages %>
+    </div>
     <%= render "pages/map" %>
   </div>
 </div>
