@@ -1,2 +1,6 @@
-<canvas class="map" id="map-<%= map.id %>" data-map-id="<%= map.id %>" data-image="<%= map.image.key %>">
-</canvas>
+<% map.markers.each do |marker| %>
+  <span class="marker-for-<%= map.id %> d-none" data-id="<%= marker.id %>" data-name="<%= marker.name %>" data-x="<%= marker.x %>" data-y="<%= marker.y %>"></span>
+<% end %>
+
+<div class="map" id="map-<%= map.id %>" data-map-id="<%= map.id %>" data-image="<%= map.image.key %>">
+</div>

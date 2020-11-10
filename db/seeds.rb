@@ -11,7 +11,8 @@ puts "Cleaning DB..."
 Message.destroy_all
 SpecialSkill.destroy_all
 Character.destroy_all
-
+Marker.destroy_all
+Map.destroy_all
 
 puts "Creating maps"
 
@@ -21,17 +22,110 @@ map.image.attach(io: file, filename: 'monde.jpg', content_type: 'image/jpg')
 
 map.save!
 
+boat = Marker.create!(
+  name: 'boat',
+  x: 0,
+  y: 60,
+  map: map
+)
+marker1 = Marker.create!(
+  name: 'blue',
+  x: 0,
+  y: 120,
+  map: map
+)
+marker2 = Marker.create!(
+  name: 'green',
+  x: 0,
+  y: 180,
+  map: map
+)
+marker3 = Marker.create!(
+  name: 'red',
+  x: 0,
+  y: 240,
+  map: map
+)
+marker4 = Marker.create!(
+  name: 'yellow',
+  x: 0,
+  y: 300,
+  map: map
+)
+
 file = URI.open('https://res.cloudinary.com/hugs/image/upload/v1604411534/ile-bannis_xtkg3v.png')
 map = Map.new(name: 'Ile des Bannis')
 map.image.attach(io: file, filename: 'bannis.png', content_type: 'image/png')
 
 map.save!
 
+boat = Marker.create!(
+  name: 'boat',
+  x: 0,
+  y: 60,
+  map: map
+)
+marker1 = Marker.create!(
+  name: 'blue',
+  x: 0,
+  y: 120,
+  map: map
+)
+marker2 = Marker.create!(
+  name: 'green',
+  x: 0,
+  y: 180,
+  map: map
+)
+marker3 = Marker.create!(
+  name: 'red',
+  x: 0,
+  y: 240,
+  map: map
+)
+marker4 = Marker.create!(
+  name: 'yellow',
+  x: 0,
+  y: 300,
+  map: map
+)
+
 file = URI.open('https://res.cloudinary.com/hugs/image/upload/v1604515897/l8qwenrpo5ic9rfj4amu.png')
 map = Map.new(name: 'Ile des Templiers')
 map.image.attach(io: file, filename: 'templiers.png', content_type: 'image/png')
 
 map.save!
+
+boat = Marker.create!(
+  name: 'boat',
+  x: 0,
+  y: 60,
+  map: map
+)
+marker1 = Marker.create!(
+  name: 'blue',
+  x: 0,
+  y: 120,
+  map: map
+)
+marker2 = Marker.create!(
+  name: 'green',
+  x: 0,
+  y: 180,
+  map: map
+)
+marker3 = Marker.create!(
+  name: 'red',
+  x: 0,
+  y: 240,
+  map: map
+)
+marker4 = Marker.create!(
+  name: 'yellow',
+  x: 0,
+  y: 300,
+  map: map
+)
 
 puts "Creating characters"
 

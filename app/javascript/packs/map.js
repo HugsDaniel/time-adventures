@@ -22,70 +22,97 @@ const initMap = () => {
       pane.classList.remove('show')
       pane.classList.remove('active')
     }
-    // pane.classList.remove('show active')
   })
 
   canvasCollection.forEach((canvas) => {
-    const context = canvas.getContext('2d')
+    // const context = canvas.getContext('2d')
+    const stage = new Konva.Stage({
+      container: canvas,
+      width: measures[canvas.dataset.mapId][0],
+      height: measures[canvas.dataset.mapId][1],
+    });
 
-    if (canvas.dataset.mapId) {
-      context.canvas.width = measures[canvas.dataset.mapId][0]
-      context.canvas.height = measures[canvas.dataset.mapId][1]
+    const layer = new Konva.Layer();
+    stage.add(layer);
 
-      const img = new Image();
-      img.onload = function() {
-        context.drawImage(img, 0, 0, context.canvas.width, context.canvas.height);
-      };
-      // img.src = 'myImage.png';
-      img.src = 'http://res.cloudinary.com/hugs/image/upload/c_fill/' + canvas.dataset.image;
-    } else {
-      // context.canvas.width = measures['draw'][0]
-      // context.canvas.height = measures['draw'][1]
+    const imageObj = new Image();
+    imageObj.onload = () => {
+      const image = new Konva.Image({
+        x: 0,
+        y: 0,
+        id: canvas.dataset.mapId,
+        image: imageObj,
+        width: measures[canvas.dataset.mapId][0],
+        height: measures[canvas.dataset.mapId][1]
+      });
 
-      // canvas.addEventListener('mousedown', startPainting);
-      // canvas.addEventListener('mouseup', stopPainting);
-      // canvas.addEventListener('mousemove', sketch);
-
-      // let coord = {x:0 , y:0};
-      // let paint = false;
-
-      // function getPosition(event){
-      //   coord.x = event.clientX - canvas.offsetWidth;
-      //   coord.y = event.clientY - canvas.offsetTop;
-      // }
-
-      // function startPainting(event){
-      //   paint = true;
-      //   getPosition(event);
-      // }
-      // function stopPainting(){
-      //   paint = false;
-      // }
-
-      // function sketch(event){
-      //   if (!paint) return;
-      //   context.beginPath();
-      //   context.lineWidth = 5;
-      //   context.lineCap = 'round';
-      //   context.strokeStyle = 'green';
-      //   context.moveTo(coord.x, coord.y);
-      //   getPosition(event);
-      //   context.lineTo(coord.x , coord.y);
-      //   context.stroke();
-      // }
+      layer.add(image);
+      layer.draw();
     }
+    imageObj.src = 'http://res.cloudinary.com/hugs/image/upload/c_fill/' + canvas.dataset.image
+
+    const markers = document.querySelectorAll(`.marker-for-${canvas.dataset.mapId}`)
+
+    markers.forEach((marker) => {
+
+      const markerImageObj = new Image();
+
+      markerImageObj.onload = () => {
+        setTimeout(() => {
+          var markerImage = new Konva.Image({
+            x: parseInt(marker.dataset.x),
+            y: parseInt(marker.dataset.y),
+            image: markerImageObj,
+            name: marker.dataset.id,
+            width: 50,
+            height: 50,
+            draggable: true,
+            dragBoundFunc: function (pos) {
+              var newY = pos.y < 0 ? 0 : pos.y;
+              var newX = pos.x < 0 ? 0 : pos.x;
+              return {
+                x: newX,
+                y: newY,
+              };
+            },
+          });
+
+          layer.add(markerImage);
+          layer.draw();
+
+        }, 2000);
+      }
+      markerImageObj.src = `assets/marker-${marker.dataset.name}.png`
+    })
+
+    stage.on('dragend', function (e) {
+      moveMarker(stage, e.target.attrs.name, e.target.attrs.x, e.target.attrs.y)
+    });
   })
 
+  const moveMarker = (stage, id, x, y) => {
+    fetch(`/markers/${id}`, {
+      method: 'put',
+      body: JSON.stringify({ id: id, x: x, y: y }),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': Rails.csrfToken()
+      },
+      credentials: 'same-origin'
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      console.log(data)
+    });
+  }
 
   window.addEventListener('load', () => { initCanvas() })
-
   const initCanvas = () => {
     const content = document.getElementById('map-draw').dataset.content
     let stage;
     let layer;
 
     if (content !== '') {
-      console.log(content.toJSON())
       stage = Konva.Node.create(content, 'map-draw');
     } else {
       stage = new Konva.Stage({

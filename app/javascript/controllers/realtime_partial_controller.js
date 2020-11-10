@@ -35,6 +35,7 @@ export default class extends Controller {
   }
 
   renderPartial(data) {
+    console.log("salut")
     let newBody = this._parseHTMLResponse(data['body']);
 
     // Replace all data-turbolinks-permanent elements in the body with what was there
@@ -60,7 +61,11 @@ export default class extends Controller {
   }
 
   afterRenderPartial(data) {
-    this._initCanvas()
+    if (data.name === 'map') {
+      this._reloadMapCanvas(data.id)
+    } else {
+      this._reloadDrawingCanvas()
+    }
   }
 
   // From: https://stackoverflow.com/a/42658543/445724
@@ -75,7 +80,108 @@ export default class extends Controller {
     return parsedHTML;
   }
 
-  _initCanvas() {
+  _reloadMapCanvas(id) {
+    console.log(id)
+    const canvas = document.getElementById(`map-${id}`)
+    const pane = document.getElementById(`nav-${id}`)
+    let width;
+    let height;
+
+    if (!pane.classList.contains('show') && !pane.classList.contains('active')) {
+      pane.classList.add('show')
+      pane.classList.add('active')
+
+      width = canvas.offsetWidth
+      height = canvas.offsetHeight
+
+      pane.classList.remove('show')
+      pane.classList.remove('active')
+    } else {
+      width = canvas.offsetWidth
+      height = canvas.offsetHeight
+    }
+    // const context = canvas.getContext('2d')
+    const stage = new Konva.Stage({
+      container: canvas,
+      width: width,
+      height: height,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    const imageObj = new Image();
+    imageObj.onload = () => {
+      const image = new Konva.Image({
+        x: 0,
+        y: 0,
+        id: canvas.dataset.mapId,
+        image: imageObj,
+        width: width,
+        height: height
+      });
+
+      layer.add(image);
+      layer.draw();
+    }
+    imageObj.src = 'http://res.cloudinary.com/hugs/image/upload/c_fill/' + canvas.dataset.image
+
+    const markers = document.querySelectorAll(`.marker-for-${canvas.dataset.mapId}`)
+
+    markers.forEach((marker) => {
+
+      const markerImageObj = new Image();
+
+      markerImageObj.onload = () => {
+        setTimeout(() => {
+          var markerImage = new Konva.Image({
+            x: parseInt(marker.dataset.x),
+            y: parseInt(marker.dataset.y),
+            image: markerImageObj,
+            name: marker.dataset.id,
+            width: 50,
+            height: 50,
+            draggable: true,
+            dragBoundFunc: function (pos) {
+              var newY = pos.y < 0 ? 0 : pos.y;
+              var newX = pos.x < 0 ? 0 : pos.x;
+              return {
+                x: newX,
+                y: newY,
+              };
+            },
+          });
+
+          layer.add(markerImage);
+          layer.draw();
+
+        }, 100);
+      }
+      markerImageObj.src = `assets/marker-${marker.dataset.name}.png`
+
+      stage.on('dragend', function (e) {
+        moveMarker(e.target.attrs.name, e.target.attrs.x, e.target.attrs.y)
+      });
+    })
+
+    const moveMarker = (id, x, y) => {
+      fetch(`/markers/${id}`, {
+        method: 'put',
+        body: JSON.stringify({ id: id, x: x, y: y }),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': Rails.csrfToken()
+        },
+        credentials: 'same-origin'
+      }).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+        console.log(data)
+      });
+    }
+  }
+
+  _reloadDrawingCanvas() {
     const content = document.getElementById('map-draw').dataset.content
     let stage;
     let layer;

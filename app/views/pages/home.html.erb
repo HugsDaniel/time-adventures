@@ -27,7 +27,7 @@
         <%= render "pages/draw", drawing: '' %>
       </div>
       <% @maps.each do |map| %>
-        <div class="tab-pane fade <%= 'show active' if map.name == 'Monde' %>" id="nav-<%= map.id %>" role="tabpanel" data-map-id="<%= map.id %>" data-map-name="<%= map.name %>" aria-labelledby="nav-<%= map.id %>-tab">
+        <div class="tab-pane fade <%= 'show active' if map.name == 'Monde' %>" id="nav-<%= map.id %>" role="tabpanel" data-map-id="<%= map.id %>" data-map-name="<%= map.name %>" aria-labelledby="nav-<%= map.id %>-tab" data-controller="realtime-partial" data-realtime-partial-key="map/<%= map.id %>">
           <%= render "pages/map", map: map %>
         </div>
       <% end %>
