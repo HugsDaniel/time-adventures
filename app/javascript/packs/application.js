@@ -4,6 +4,7 @@ require("@rails/activestorage").start()
 require("channels")
 
 import "bootstrap";
+import Konva from "konva"
 import { initMap } from "./map"
 
 document.addEventListener('turbolinks:load', () => {

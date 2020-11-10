@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root to: 'pages#lobby'
   get "/game", to: "pages#home", as: :game
 
+  resources :drawings, only: :create
   resources :characters, only: [:edit, :update] do
     member do
       patch "inventory"

@@ -1,5 +1,6 @@
 import { Controller } from "stimulus"
 import consumer from "../channels/consumer"
+import Rails from '@rails/ujs'
 
 export default class extends Controller {
   initialize () {
@@ -23,6 +24,7 @@ export default class extends Controller {
         },
         received(data) {
           realtimePartialController.renderPartial(data);
+          realtimePartialController.afterRenderPartial(data);
         }
       }
     );
@@ -57,6 +59,10 @@ export default class extends Controller {
     }
   }
 
+  afterRenderPartial(data) {
+    this._initCanvas()
+  }
+
   // From: https://stackoverflow.com/a/42658543/445724
   // using .innerHTML= is risky. Instead we need to convert the HTML received
   // into elements, then append them.
@@ -67,5 +73,74 @@ export default class extends Controller {
     let responseDocument = parser.parseFromString( `<template>${responseHTML}</template>` , 'text/html');
     let parsedHTML = responseDocument.head.firstElementChild.content;
     return parsedHTML;
+  }
+
+  _initCanvas() {
+    const content = document.getElementById('map-draw').dataset.content
+    let stage;
+    let layer;
+
+    if (content !== '') {
+      // console.log(content.toJSON())
+      stage = Konva.Node.create(content, 'map-draw');
+      stage.getChildren((node) => {
+        if (node.getClassName() === "Layer") {
+          layer = node
+        }
+      })
+      console.log(layer)
+    }
+
+    var isPaint = false;
+    var mode = 'brush';
+    var lastLine;
+
+    stage.on('mousedown touchstart', function (e) {
+      isPaint = true;
+      var pos = stage.getPointerPosition();
+      lastLine = new Konva.Line({
+        stroke: '#df4b26',
+        strokeWidth: mode === 'brush' ? 5 : 20,
+        globalCompositeOperation:
+          mode === 'brush' ? 'source-over' : 'destination-out',
+        points: [pos.x, pos.y],
+      });
+      layer.add(lastLine);
+    });
+
+    stage.on('mouseup touchend', function () {
+      isPaint = false;
+      const json = stage.toJSON();
+
+      fetch('/drawings', {
+        method: 'post',
+        body: JSON.stringify(json),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': Rails.csrfToken()
+        },
+        credentials: 'same-origin'
+      }).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+        console.log(data)
+      });
+    });
+
+    stage.on('mousemove touchmove', function () {
+      if (!isPaint) {
+        return;
+      }
+
+      const pos = stage.getPointerPosition();
+      var newPoints = lastLine.points().concat([pos.x, pos.y]);
+      lastLine.points(newPoints);
+      layer.batchDraw();
+    });
+
+    var select = document.getElementById('tool');
+    select.addEventListener('change', function () {
+      mode = select.value;
+    });
   }
 }
