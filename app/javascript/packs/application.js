@@ -5,7 +5,7 @@ require("channels")
 
 import "bootstrap";
 import Konva from "konva"
-import { initMap } from "./map"
+import { initCanvas } from "./canvas"
 
 document.addEventListener('turbolinks:load', () => {
   $(function () {
@@ -14,7 +14,7 @@ document.addEventListener('turbolinks:load', () => {
   $(function () {
     $('[data-toggle="popover"]').popover()
   })
-  initMap()
+  initCanvas()
 });
 
 import "controllers"

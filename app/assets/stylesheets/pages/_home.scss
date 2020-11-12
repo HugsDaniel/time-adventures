@@ -37,6 +37,11 @@ hr {
   width: 100%;
   height: 100%;
 }
+.map img {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
 #map-draw {
   height: 100%;
   width: 100%;
@@ -169,4 +174,12 @@ hr {
 .tabs-underlined .tab-underlined.active {
   opacity: 1;
   border-bottom: 3px solid #555555;
+}
+
+#dices-container {
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}
+#dices-container div .nes-btn {
+  padding: 10px 20px !important;
 }

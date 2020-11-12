@@ -35,7 +35,6 @@ export default class extends Controller {
   }
 
   renderPartial(data) {
-    console.log("salut")
     let newBody = this._parseHTMLResponse(data['body']);
 
     // Replace all data-turbolinks-permanent elements in the body with what was there
@@ -81,7 +80,6 @@ export default class extends Controller {
   }
 
   _reloadMapCanvas(id) {
-    console.log(id)
     const canvas = document.getElementById(`map-${id}`)
     const pane = document.getElementById(`nav-${id}`)
     let width;
@@ -176,7 +174,6 @@ export default class extends Controller {
       }).then(function(response) {
         return response.json();
       }).then(function(data) {
-        console.log(data)
       });
     }
   }
@@ -194,7 +191,6 @@ export default class extends Controller {
           layer = node
         }
       })
-      console.log(layer)
     }
 
     var isPaint = false;
@@ -229,7 +225,6 @@ export default class extends Controller {
       }).then(function(response) {
         return response.json();
       }).then(function(data) {
-        console.log(data)
       });
     });
 

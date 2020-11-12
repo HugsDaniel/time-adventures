@@ -36,6 +36,7 @@ export default class extends ApplicationController {
       event.currentTarget.dataset.specialSkill,
       event.currentTarget.dataset.skill,
       event.currentTarget.dataset.factor,
+      event.currentTarget.dataset.dice,
       lastMessageId
     )
   }

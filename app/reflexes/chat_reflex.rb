@@ -3,10 +3,10 @@
 class ChatReflex < ApplicationReflex
   include CableReady::Broadcaster
 
-  def launch(character_id, difficulty, special_skill, skill, factor, message_id)
+  def launch(character_id, difficulty, special_skill, skill, factor, dice, message_id)
     character = Character.find(character_id)
 
-    result = launch_and_calculate_success(character, difficulty, special_skill, skill, factor)
+    result = launch_and_calculate_success(character, difficulty, dice, special_skill, skill, factor)
 
     Message.create!(
       author: character.name,
@@ -29,23 +29,29 @@ class ChatReflex < ApplicationReflex
 
   private
 
-  def launch_and_calculate_success(character, difficulty, special_skill, skill, factor)
+  def launch_and_calculate_success(character, difficulty, dice, special_skill, skill, factor)
 
-    difficulty = ((character.send(skill.downcase) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present? && special_skill.present?
-
-    launch = rand(1..100)
-    success = launch <= difficulty.to_i
-
-    if difficulty.to_i == launch
-      message = "Ça passe tout juste"
-    elsif success && launch <= 10
-      message = "Gros GG !"
-    elsif success
-      message = "GG !"
-    elsif !success && launch >= 90
-      message = "Ça pique"
+    if dice.present?
+      launch = rand(1..difficulty.to_i)
+      message = nil
+      success = true
     else
-      message = "Loupé..."
+      difficulty = ((character.send(skill.downcase) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present? && special_skill.present?
+
+      launch = rand(1..100)
+      success = launch <= difficulty.to_i
+
+      if difficulty.to_i == launch
+        message = "Ça passe tout juste"
+      elsif success && launch <= 10
+        message = "Gros GG !"
+      elsif success
+        message = "GG !"
+      elsif !success && launch >= 90
+        message = "Ça pique"
+      else
+        message = "Loupé..."
+      end
     end
 
     return { difficulty: difficulty.to_i, launch: launch, success: success, content: message }

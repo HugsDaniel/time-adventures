@@ -19,6 +19,25 @@
       <div id="life<%= char.id %>" class="row life-container">
         <%= render "pages/life", char: char %>
       </div>
+      <div id="dices-container" data-controller="chat">
+        <div class="d-flex justify-content-between">
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="3" data-special-skill="Dé 3" data-character-id="<%= char.id %>" data-dice="d3">
+            d3
+          </button>
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="6" data-special-skill="Dé 6" data-character-id="<%= char.id %>" data-dice="d6">
+            d6
+          </button>
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="8" data-special-skill="Dé 8" data-character-id="<%= char.id %>" data-dice="d8">
+            d8
+          </button>
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="10" data-special-skill="Dé 10" data-character-id="<%= char.id %>" data-dice="d10">
+            d10
+          </button>
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="20" data-special-skill="Dé 20" data-character-id="<%= char.id %>" data-dice="d20">
+            d20
+          </button>
+        </div>
+      </div>
       <div class="skills d-flex justify-content-between" data-controller="chat" id="skills<%= char.id %>">
         <%= render "pages/skills", char: char %>
       </div>
