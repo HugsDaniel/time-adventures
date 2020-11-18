@@ -35,7 +35,6 @@ export default class extends Controller {
   }
 
   renderPartial(data) {
-    console.log("coucou")
     let newBody = this._parseHTMLResponse(data['body']);
 
     // Replace all data-turbolinks-permanent elements in the body with what was there
@@ -61,7 +60,6 @@ export default class extends Controller {
   }
 
   afterRenderPartial(data) {
-    console.log(data)
     if (data.name === 'draw') {
       this._reloadDrawingCanvas()
     }
@@ -103,13 +101,38 @@ export default class extends Controller {
       var pos = stage.getPointerPosition();
       lastLine = new Konva.Line({
         stroke: '#df4b26',
-        strokeWidth: mode === 'brush' ? 5 : 20,
-        globalCompositeOperation:
-          mode === 'brush' ? 'source-over' : 'destination-out',
+        strokeWidth: 5,
+        globalCompositeOperation: 'source-over',
         points: [pos.x, pos.y],
       });
       layer.add(lastLine);
     });
+
+    const clearBtn  = document.getElementById("clear-btn")
+
+    clearBtn.addEventListener("click", (event) => {
+      isPaint = false;
+      event.preventDefault()
+
+      layer.destroyChildren()
+      layer.draw()
+
+      const json = stage.toJSON();
+
+      fetch('/drawings', {
+        method: 'post',
+        body: JSON.stringify(json),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': Rails.csrfToken()
+        },
+        credentials: 'same-origin'
+      }).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+      });
+    })
+
 
     stage.on('mouseup touchend', function () {
       isPaint = false;
@@ -137,12 +160,7 @@ export default class extends Controller {
       const pos = stage.getPointerPosition();
       var newPoints = lastLine.points().concat([pos.x, pos.y]);
       lastLine.points(newPoints);
-      layer.batchDraw();
-    });
-
-    var select = document.getElementById('tool');
-    select.addEventListener('change', function () {
-      mode = select.value;
+      layer.draw();
     });
   }
 }

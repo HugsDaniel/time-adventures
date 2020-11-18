@@ -41,13 +41,34 @@ const initCanvas = () => {
     var pos = stage.getPointerPosition();
     lastLine = new Konva.Line({
       stroke: '#df4b26',
-      strokeWidth: mode === 'brush' ? 5 : 20,
-      globalCompositeOperation:
-        mode === 'brush' ? 'source-over' : 'destination-out',
+      strokeWidth: 5,
+      globalCompositeOperation: 'source-over',
       points: [pos.x, pos.y],
     });
     layer.add(lastLine);
   });
+
+  const clearBtn  = document.getElementById("clear-btn")
+
+  clearBtn.addEventListener("click", (event) => {
+    event.preventDefault()
+    stage.clear()
+
+    const json = stage.toJSON();
+
+    fetch('/drawings', {
+      method: 'post',
+      body: JSON.stringify(json),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': Rails.csrfToken()
+      },
+      credentials: 'same-origin'
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+    });
+  })
 
   stage.on('mouseup touchend', function () {
     isPaint = false;
@@ -78,10 +99,6 @@ const initCanvas = () => {
     layer.batchDraw();
   });
 
-  var select = document.getElementById('tool');
-  select.addEventListener('change', function () {
-    mode = select.value;
-  });
 }
 
 export { initCanvas }
