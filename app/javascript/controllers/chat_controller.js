@@ -9,7 +9,7 @@ const reload = controller => {
 const debouncedReload = debounce(reload, 100)
 
 export default class extends ApplicationController {
-  static targets = ['list', 'input', 'dice']
+  static targets = ['list', 'input', 'dice', 'skill', 'factor', 'value', 'name', 'characterId']
 
   connect () {
     super.connect()
@@ -26,18 +26,39 @@ export default class extends ApplicationController {
     )
   }
 
-  launch (event) {
+  launchDice (event) {
     Rails.stopEverything(event)
-    lastMessageId = Math.random()
+
     this.stimulate(
-      'ChatReflex#launch',
+      'ChatReflex#launch_dice',
       event.currentTarget.dataset.characterId,
       event.currentTarget.dataset.difficulty,
-      event.currentTarget.dataset.specialSkill,
+      event.currentTarget.dataset.name,
+    )
+  }
+
+  launchSpecial (event) {
+    Rails.stopEverything(event)
+
+    this.stimulate(
+      'ChatReflex#launch_special',
+      this.characterIdTarget.value,
+      this.nameTarget.value,
+      this.valueTarget.value,
+      this.skillTarget.value,
+      this.factorTarget.value
+    )
+  }
+
+  launch (event) {
+    Rails.stopEverything(event)
+
+    this.stimulate(
+      'ChatReflex#launch_skill',
+      event.currentTarget.dataset.characterId,
+      event.currentTarget.dataset.difficulty,
       event.currentTarget.dataset.skill,
-      event.currentTarget.dataset.factor,
-      event.currentTarget.dataset.dice,
-      lastMessageId
+      event.currentTarget.dataset.dice
     )
   }
 

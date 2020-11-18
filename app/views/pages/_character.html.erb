@@ -21,19 +21,22 @@
       </div>
       <div id="dices-container" data-controller="chat">
         <div class="d-flex justify-content-between">
-          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="3" data-special-skill="Dé 3" data-character-id="<%= char.id %>" data-dice="d3">
-            d3
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="4" data-name="Dé 4" data-character-id="<%= char.id %>" data-dice="d4">
+            d4
           </button>
-          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="6" data-special-skill="Dé 6" data-character-id="<%= char.id %>" data-dice="d6">
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="6" data-name="Dé 6" data-character-id="<%= char.id %>" data-dice="d6">
             d6
           </button>
-          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="8" data-special-skill="Dé 8" data-character-id="<%= char.id %>" data-dice="d8">
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="8" data-name="Dé 8" data-character-id="<%= char.id %>" data-dice="d8">
             d8
           </button>
-          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="10" data-special-skill="Dé 10" data-character-id="<%= char.id %>" data-dice="d10">
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="10" data-name="Dé 10" data-character-id="<%= char.id %>" data-dice="d10">
             d10
           </button>
-          <button class="d-flex nes-btn is-primary" data-action="click->chat#launch" data-difficulty="20" data-special-skill="Dé 20" data-character-id="<%= char.id %>" data-dice="d20">
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="12" data-name="Dé 12" data-character-id="<%= char.id %>" data-dice="d12">
+            d12
+          </button>
+          <button class="d-flex nes-btn is-primary" data-action="click->chat#launchDice" data-difficulty="20" data-name="Dé 20" data-character-id="<%= char.id %>" data-dice="d20">
             d20
           </button>
         </div>
@@ -41,19 +44,24 @@
       <div class="skills d-flex justify-content-between" data-controller="chat" id="skills<%= char.id %>">
         <%= render "pages/skills", char: char %>
       </div>
-      <div class="skills" data-controller="chat" id="special_skills">
+      <div class="skills" id="special_skills">
         <% char.special_skills.order(:id).each do |special_skill| %>
           <hr>
-          <div class="special-skill my-2 d-flex align-items-center justify-content-between">
-            <span class="mx-1"><%= special_skill.name %></span>
-            <button class="d-flex" data-target="chat.diceSpecial" data-action="click->chat#launch" data-special-skill="<%= special_skill.name %>" data-difficulty="<%= special_skill.value %>" data-skill="<%= special_skill.skill %>" data-factor="<%= special_skill.factor %>" data-character-id="<%= char.id %>" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<%= popover_content_for(special_skill) %>">
-              <% if special_skill.skill.present? %>
-                <%= char.send(special_skill.skill)*5/special_skill.factor + special_skill.value %>
-              <% else %>
+          <div class="special-skill">
+            <span class="special-skill__name mx-1"><%= special_skill.name %></span>
+            <form data-controller="chat" action="#" id="launch-<%= special_skill.id %>" class="special-skill__form" data-action="submit->chat#launchSpecial">
+              <div class="d-flex flex-column">
+                <%= select_tag "skill", options_for_select(char.skills), include_blank: true, data: { target: "chat.skill" } %>
+                <%= number_field_tag "factor", nil, placeholder: "Facteur", data: { target: "chat.factor" } %>
+              </div>
+              <%= number_field_tag "value", special_skill.value, class: "d-none", data: { target: "chat.value" } %>
+              <%= text_field_tag "name", special_skill.name, class: "d-none", data: { target: "chat.name" } %>
+              <%= number_field_tag "character_id", char.id, class: "d-none", data: { target: "chat.characterId" } %>
+              <button class="d-flex" data-character-id="<%= char.id %>">
                 <%= special_skill.value %>
-              <% end %>
-              <i class="fas fa-dice-d20 ml-2"></i>
-            </button>
+                <i class="fas fa-dice-d20 ml-2"></i>
+              </button>
+            </form>
           </div>
         <% end %>
       </div>

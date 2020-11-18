@@ -3,55 +3,104 @@
 class ChatReflex < ApplicationReflex
   include CableReady::Broadcaster
 
-  def launch(character_id, difficulty, special_skill, skill, factor, dice, message_id)
-    character = Character.find(character_id)
+  def launch_skill(character_id, difficulty, skill, dice)
 
-    result = launch_and_calculate_success(character, difficulty, dice, special_skill, skill, factor)
+    result = result_for_skill(character, difficulty, skill)
 
     Message.create!(
-      author: character.name,
-      content: result[:content],
-      success: result[:success],
-      result:  result[:launch],
-      difficulty: result[:difficulty],
-      skill: special_skill.present? ? special_skill : skill,
-      launch: true
+      author:        character.name,
+      content:       result[:content],
+      success:       result[:success],
+      result:        result[:launch],
+      difficulty:    result[:difficulty],
+      skill:         skill,
+      launch:        true
     )
 
     morph "#chat", ApplicationController.render( partial: "pages/chat", locals: { messages: Message.all.order("created_at DESC") })
-
-    # cable_ready["chat"].dispatch_event name: "chats:added", detail: {message_id: message_id}
-    # cable_ready.broadcast
   end
 
-  def reload
+  def launch_special(character_id, special_skill, value, skill, factor)
+    character = Character.find(character_id)
+
+    if skill != "" && factor != ""
+      difficulty = ((skill.to_i * 5 / factor.to_i) + value.to_i).floor
+    elsif skill != "" && factor == ""
+      difficulty = (skill.to_i * 5 + value.to_i).floor
+    elsif skill == "" && factor == ""
+      difficulty = value.to_i
+    end
+
+    launch = rand(1..100)
+    success = launch <= difficulty
+
+    if difficulty.to_i == launch
+      message = "Ça passe tout juste"
+    elsif success && launch <= 10
+      message = "Gros GG !"
+    elsif success
+      message = "GG !"
+    elsif !success && launch >= 90
+      message = "Ça pique"
+    else
+      message = "Loupé..."
+    end
+
+
+    Message.create!(
+      author:     character.name,
+      content:    message,
+      success:    success,
+      result:     launch,
+      difficulty: difficulty,
+      skill:      special_skill,
+      launch:     true
+    )
+
+    morph "#chat", ApplicationController.render( partial: "pages/chat", locals: { messages: Message.all.order("created_at DESC") })
+  end
+
+  def launch_dice(character_id, dice, name)
+    character = Character.find(character_id)
+
+    launch = rand(1..dice.to_i)
+    message = nil
+    success = true
+
+    Message.create!(
+      author:     character.name,
+      content:    message,
+      success:    success,
+      result:     launch,
+      difficulty: dice,
+      skill:      name,
+      launch:     true
+    )
+    morph "#chat", ApplicationController.render( partial: "pages/chat", locals: { messages: Message.all.order("created_at DESC") })
   end
 
   private
 
-  def launch_and_calculate_success(character, difficulty, dice, special_skill, skill, factor)
+  def result_for_dice(character, dice)
 
-    if dice.present?
-      launch = rand(1..difficulty.to_i)
-      message = nil
-      success = true
+    return { difficulty: difficulty.to_i, launch: launch, success: success, content: message }
+  end
+
+  def result_for_skill(character, difficulty, skill)
+
+    launch = rand(1..100)
+    success = launch <= difficulty.to_i
+
+    if difficulty.to_i == launch
+      message = "Ça passe tout juste"
+    elsif success && launch <= 10
+      message = "Gros GG !"
+    elsif success
+      message = "GG !"
+    elsif !success && launch >= 90
+      message = "Ça pique"
     else
-      difficulty = ((character.send(skill.downcase) * 5 / factor.to_i) + difficulty.to_i).floor if skill.present? && special_skill.present?
-
-      launch = rand(1..100)
-      success = launch <= difficulty.to_i
-
-      if difficulty.to_i == launch
-        message = "Ça passe tout juste"
-      elsif success && launch <= 10
-        message = "Gros GG !"
-      elsif success
-        message = "GG !"
-      elsif !success && launch >= 90
-        message = "Ça pique"
-      else
-        message = "Loupé..."
-      end
+      message = "Loupé..."
     end
 
     return { difficulty: difficulty.to_i, launch: launch, success: success, content: message }
