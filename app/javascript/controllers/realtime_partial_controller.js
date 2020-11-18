@@ -35,6 +35,7 @@ export default class extends Controller {
   }
 
   renderPartial(data) {
+    console.log("coucou")
     let newBody = this._parseHTMLResponse(data['body']);
 
     // Replace all data-turbolinks-permanent elements in the body with what was there
@@ -60,6 +61,7 @@ export default class extends Controller {
   }
 
   afterRenderPartial(data) {
+    console.log(data)
     if (data.name === 'draw') {
       this._reloadDrawingCanvas()
     }
